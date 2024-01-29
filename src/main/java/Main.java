@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -35,6 +35,8 @@ public class Main {
         System.out.println("Writing files to " + out);
 
         int num = 0;
+        int progress = 0;
+
         for (Path p : mapFiles) {
             try {
                 BufferedImage img = new BufferedImage(128, 128, BufferedImage.TYPE_4BYTE_ABGR);
@@ -71,10 +73,18 @@ public class Main {
                 tempFile.toFile().renameTo(outFile.toFile());
 
                 num++;
+
+                System.out.print(MessageFormat.format("Converting maps... Progress: {0}% ({1}/{2})\r",
+                        (int) (100.0 / mapFiles.size() * num),
+                        num,
+                        mapFiles.size())
+                );
+                System.out.flush();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
+        System.out.println();
         System.out.println("Done! Converted " + num + " maps.");
     }
 
