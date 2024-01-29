@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 public class Main {
+
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
             System.out.println("Usage: java -jar map-to-img.jar [directory]");
@@ -35,7 +36,6 @@ public class Main {
         System.out.println("Writing files to " + out);
 
         int num = 0;
-        int progress = 0;
 
         for (Path p : mapFiles) {
             try {
