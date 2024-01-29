@@ -13,12 +13,18 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    private static final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(10);
+
+    public static void main(String[] args) throws IOException, InterruptedException {
         if (args.length < 1) {
             System.out.println("Usage: java -jar map-to-img.jar [directory]");
             System.out.println("Application will search up to 3 levels deep in given directory, so it can be a world or " +
@@ -35,57 +41,64 @@ public class Main {
         Files.createDirectories(out);
         System.out.println("Writing files to " + out);
 
-        int num = 0;
+        final AtomicInteger done = new AtomicInteger(0);
 
         for (Path p : mapFiles) {
-            try {
-                BufferedImage img = new BufferedImage(128, 128, BufferedImage.TYPE_4BYTE_ABGR);
-                CompoundTag t = read(p.toFile()).unpack().get("data").asCompound();
-                byte[] data = t.get("colors").byteArray();
+            THREAD_POOL.execute(() -> {
+                        try {
+                            BufferedImage img = new BufferedImage(128, 128, BufferedImage.TYPE_4BYTE_ABGR);
+                            CompoundTag t = read(p.toFile()).unpack().get("data").asCompound();
+                            byte[] data = t.get("colors").byteArray();
 
-                for (int i = 0; i < 16384; ++i) {
-                    int color;
-                    int j = data[i] & 255;
+                            for (int i = 0; i < 16384; ++i) {
+                                int color;
+                                int j = data[i] & 255;
 
-                    if (j / 4 == 0) {
-                        color = (i + i / 128 & 1) * 8 + 16 << 24;
-                    } else {
-                        color = BasicColor.colors.get(j / 4).shaded(j & 3);
+                                if (j / 4 == 0) {
+                                    color = (i + i / 128 & 1) * 8 + 16 << 24;
+                                } else {
+                                    color = BasicColor.colors.get(j / 4).shaded(j & 3);
+                                }
+
+                                img.setRGB(i % 128, i / 128, color);
+                            }
+
+                            // write image to temp location
+                            Path outFile = Paths.get(out.toString(), p.getFileName().toString().replace(".dat", ".png"));
+                            Path tempFile = Paths.get(out.toString(), "temp-" + p.getFileName().toString().replace(".dat", ""));
+                            ImageIO.write(img, "png", tempFile.toFile());
+
+                            // overwrite file only if its identical, otherwise rename the current file
+                            if (outFile.toFile().exists()) {
+                                if (!FileUtils.contentEquals(outFile.toFile(), tempFile.toFile())) {
+                                    long time = System.nanoTime();
+                                    outFile = Paths.get(outFile.toString().replace(".png", "-" + time + ".png"));
+                                }
+                            }
+
+                            Files.move(tempFile, outFile, StandardCopyOption.REPLACE_EXISTING);
+                            tempFile.toFile().renameTo(outFile.toFile());
+
+                            done.incrementAndGet();
+
+                            System.out.print(MessageFormat.format("Converting maps... Progress: {0}% ({1}/{2})\r",
+                                    (int) (100.0 / mapFiles.size() * done.get()),
+                                    done.get(),
+                                    mapFiles.size())
+                            );
+                            System.out.flush();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
                     }
-
-                    img.setRGB(i % 128, i / 128, color);
-                }
-
-                // write image to temp location
-                Path outFile = Paths.get(out.toString(), p.getFileName().toString().replace(".dat", ".png"));
-                Path tempFile = Paths.get(out.toString(), "temp");
-                ImageIO.write(img, "png", tempFile.toFile());
-
-                // overwrite file only if its identical, otherwise rename the current file
-                if (outFile.toFile().exists()) {
-                    if (!FileUtils.contentEquals(outFile.toFile(), tempFile.toFile())) {
-                        long time = System.nanoTime();
-                        outFile = Paths.get(outFile.toString().replace(".png", "-" + time + ".png"));
-                    }
-                }
-
-                Files.move(tempFile, outFile, StandardCopyOption.REPLACE_EXISTING);
-                tempFile.toFile().renameTo(outFile.toFile());
-
-                num++;
-
-                System.out.print(MessageFormat.format("Converting maps... Progress: {0}% ({1}/{2})\r",
-                        (int) (100.0 / mapFiles.size() * num),
-                        num,
-                        mapFiles.size())
-                );
-                System.out.flush();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            );
         }
+
+        THREAD_POOL.shutdown();
+        THREAD_POOL.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+
         System.out.println();
-        System.out.println("Done! Converted " + num + " maps.");
+        System.out.println("Done! Converted " + done.get() + " maps.");
     }
 
     public static Tag read(File f) throws IOException {
