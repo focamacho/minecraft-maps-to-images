@@ -2,110 +2,93 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BasicColor {
-    final static BasicColor TRANSPARENT = new BasicColor(0, 0, 0) {
-        @Override
-        public int shaded(byte b) {
-            return 0;
-        }
-    };
 
     static Map<Integer, BasicColor> colors;
     static {
         colors = new HashMap<>();
-        colors.put(0, BasicColor.TRANSPARENT);
-        colors.put(1, toCol(127, 178, 56));
-        colors.put(2, toCol(247, 233, 163));
-        colors.put(3, toCol(199, 199, 199));
-        colors.put(4, toCol(255, 0, 0));
-        colors.put(5, toCol(160, 160, 255));
-        colors.put(6, toCol(167, 167, 167));
-        colors.put(7, toCol(0, 124, 0));
-        colors.put(8, toCol(255, 255, 255));
-        colors.put(9, toCol(164, 168, 184));
-        colors.put(10, toCol(151, 109, 77));
-        colors.put(11, toCol(112, 112, 112));
-        colors.put(12, toCol(64, 64, 255));
-        colors.put(13, toCol(143, 119, 72));
-        colors.put(14, toCol(255, 252, 245));
-        colors.put(15, toCol(216, 127, 51));
-        colors.put(16, toCol(178, 76, 216));
-        colors.put(17, toCol(102, 153, 216));
-        colors.put(18, toCol(229, 229, 51));
-        colors.put(19, toCol(127, 204, 25));
-        colors.put(20, toCol(242, 127, 165));
-        colors.put(21, toCol(76, 76, 76));
-        colors.put(22, toCol(153, 153, 153));
-        colors.put(23, toCol(76, 127, 153));
-        colors.put(24, toCol(127, 63, 178));
-        colors.put(25, toCol(51, 76, 178));
-        colors.put(26, toCol(102, 76, 51));
-        colors.put(27, toCol(102, 127, 51));
-        colors.put(28, toCol(153, 51, 51));
-        colors.put(29, toCol(25, 25, 25));
-        colors.put(30, toCol(250, 238, 77));
-        colors.put(31, toCol(92, 219, 213));
-        colors.put(32, toCol(74, 128, 255));
-        colors.put(33, toCol(0, 217, 58));
-        colors.put(34, toCol(129, 86, 49));
-        colors.put(35, toCol(112, 2, 0));
-        colors.put(36, toCol(209, 177, 161));
-        colors.put(37, toCol(159, 82, 36));
-        colors.put(38, toCol(149, 87, 108));
-        colors.put(39, toCol(112, 108, 138));
-        colors.put(40, toCol(186, 133, 36));
-        colors.put(41, toCol(103, 117, 53));
-        colors.put(42, toCol(160, 77, 78));
-        colors.put(43, toCol(57, 41, 35));
-        colors.put(44, toCol(135, 107, 98));
-        colors.put(45, toCol(87, 92, 92));
-        colors.put(46, toCol(122, 73, 88));
-        colors.put(47, toCol(76, 62, 92));
-        colors.put(48, toCol(76, 50, 35));
-        colors.put(49, toCol(76, 82, 42));
-        colors.put(50, toCol(142, 60, 46));
-        colors.put(51, toCol(37, 22, 16));
-        colors.put(52, toCol(189, 48, 49));
-        colors.put(53, toCol(148, 63, 97));
-        colors.put(54, toCol(92, 25, 29));
-        colors.put(55, toCol(22, 126, 134));
-        colors.put(56, toCol(58, 142, 140));
-        colors.put(57, toCol(86, 44, 62));
-        colors.put(58, toCol(20, 180, 133));
+        colors.put(0, new BasicColor(0));
+        colors.put(1, new BasicColor(8368696));
+        colors.put(2, new BasicColor(16247203));
+        colors.put(3, new BasicColor(13092807));
+        colors.put(4, new BasicColor(16711680));
+        colors.put(5, new BasicColor(10526975));
+        colors.put(6, new BasicColor(10987431));
+        colors.put(7, new BasicColor(31744));
+        colors.put(8, new BasicColor(16777215));
+        colors.put(9, new BasicColor(10791096));
+        colors.put(10, new BasicColor(9923917));
+        colors.put(11, new BasicColor(7368816));
+        colors.put(12, new BasicColor(4210943));
+        colors.put(13, new BasicColor(9402184));
+        colors.put(14, new BasicColor(16776437));
+        colors.put(15, new BasicColor(14188339));
+        colors.put(16, new BasicColor(11685080));
+        colors.put(17, new BasicColor(6724056));
+        colors.put(18, new BasicColor(15066419));
+        colors.put(19, new BasicColor(8375321));
+        colors.put(20, new BasicColor(15892389));
+        colors.put(21, new BasicColor(5000268));
+        colors.put(22, new BasicColor(10066329));
+        colors.put(23, new BasicColor(5013401));
+        colors.put(24, new BasicColor(8339378));
+        colors.put(25, new BasicColor(3361970));
+        colors.put(26, new BasicColor(6704179));
+        colors.put(27, new BasicColor(6717235));
+        colors.put(28, new BasicColor(10040115));
+        colors.put(29, new BasicColor(1644825));
+        colors.put(30, new BasicColor(16445005));
+        colors.put(31, new BasicColor(6085589));
+        colors.put(32, new BasicColor(4882687));
+        colors.put(33, new BasicColor(55610));
+        colors.put(34, new BasicColor(8476209));
+        colors.put(35, new BasicColor(7340544));
+        colors.put(36, new BasicColor(13742497));
+        colors.put(37, new BasicColor(10441252));
+        colors.put(38, new BasicColor(9787244));
+        colors.put(39, new BasicColor(7367818));
+        colors.put(40, new BasicColor(12223780));
+        colors.put(41, new BasicColor(6780213));
+        colors.put(42, new BasicColor(10505550));
+        colors.put(43, new BasicColor(3746083));
+        colors.put(44, new BasicColor(8874850));
+        colors.put(45, new BasicColor(5725276));
+        colors.put(46, new BasicColor(8014168));
+        colors.put(47, new BasicColor(4996700));
+        colors.put(48, new BasicColor(4993571));
+        colors.put(49, new BasicColor(5001770));
+        colors.put(50, new BasicColor(9321518));
+        colors.put(51, new BasicColor(2430480));
     }
 
-    private static BasicColor toCol(int r, int g, int b) {
-        return new BasicColor(r, g, b);
+    public final int r, g, b;
+    public final int colorValue;
+
+    public BasicColor(int color) {
+        this.r = Util.getR(color);
+        this.g = Util.getG(color);
+        this.b = Util.getB(color);
+        this.colorValue = color;
     }
 
-    final int r, g, b;
+    public int shaded(int index) {
+        int i = 220;
 
-    public BasicColor(int r, int g, int b) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-    }
-
-    public int shaded(byte shaderB) {
-        double shader = 0;
-        switch (shaderB) {
-            case 0:
-                shader = 0.71;
-                break;
-            case 1:
-                shader = 0.85;
+        switch (index) {
+            case 3:
+                i = 135;
                 break;
             case 2:
-                shader = 1.0;
+                i = 255;
                 break;
-            case 3:
-                shader = 0.53;
-                break;
+            case 0:
+                i = 180;
         }
 
-        return 255 << 24 | toInt(r, shader) << 16 | toInt(g, shader) << 8 | toInt(b, shader);
+        int j = this.r * i / 255;
+        int k = this.g * i / 255;
+        int l = this.b * i / 255;
+        return -16777216 | j << 16 | k << 8 | l;
     }
 
-    private int toInt(int c, double shader) {
-        return (int) Math.round(c * shader);
-    }
+
 }

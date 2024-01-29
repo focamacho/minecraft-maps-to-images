@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -25,9 +26,9 @@ public class Main {
         }
         String folder = args[0];
 
-        List<Path> mapFiles = Files.find(Paths.get(folder), 3, (path, attr) -> {
-            return path.getFileName().toString().matches("map_[0-9]+\\.dat");
-        }).collect(Collectors.toList());
+        List<Path> mapFiles = Files.find(Paths.get(folder), 3, (path, attr) ->
+                path.getFileName().toString().matches("map_[0-9]+\\.dat")
+        ).collect(Collectors.toList());
 
         Path out = Paths.get(folder, "out");
         Files.createDirectories(out);
@@ -40,19 +41,17 @@ public class Main {
                 CompoundTag t = read(p.toFile()).unpack().get("data").asCompound();
                 byte[] data = t.get("colors").byteArray();
 
-                for (int x = 0; x < 128; x++) {
-                    for (int y = 0; y < 128; y++) {
-                        byte input = data[x + y * 128];
-                        int colId = (input >>> 2) & 0b11111;
-                        byte shader = (byte) (input & 0b11);
+                for (int i = 0; i < 16384; ++i) {
+                    int color;
+                    int j = data[i] & 255;
 
-                        BasicColor col = BasicColor.colors.get(colId);
-                        if (col == null) {
-                            System.out.println("Unknown color: " + colId);
-                            col = BasicColor.TRANSPARENT;
-                        }
-                        img.setRGB(x, y, col.shaded(shader));
+                    if (j / 4 == 0) {
+                        color = (i + i / 128 & 1) * 8 + 16 << 24;
+                    } else {
+                        color = BasicColor.colors.get(j / 4).shaded(j & 3);
                     }
+
+                    img.setRGB(i % 128, i / 128, color);
                 }
 
                 // write image to temp location
